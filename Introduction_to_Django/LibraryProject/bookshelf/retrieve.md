@@ -1,8 +1,7 @@
 python manage.py shell
 
 from bookshelf.models import Book 
-new_book = Book.objects.all()
-
+new_book = Book.objects.get(title="1984", author="George Orwell")
 print(new_book.__dict__)
 
 
