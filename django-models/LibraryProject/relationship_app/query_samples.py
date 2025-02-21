@@ -16,5 +16,5 @@ for book in books_in_library:
 
 
 from relationship_app.models import Library, Librarian
-librarian = Librarian.objects.get(library="name_of_library")
+librarian = Librarian.objects.get(name="library_name")
 print(librarian.name)
