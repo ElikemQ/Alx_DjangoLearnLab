@@ -9,12 +9,12 @@ for book in books_by_author:
 
 # List all books in a library
 from relationship_app.models import Library
-books_in_library = Library.books.all()
+books_in_library = Library.object.get(name = "library_name")
 
 for book in books_in_library:
     print(book.title)
 
 
 from relationship_app.models import Library, Librarian
-librarian = Librarian.objects.get(name="library_name")
+librarian = Librarian.objects.get(library="name_of_library")
 print(librarian.name)
