@@ -9,10 +9,10 @@ def list_books(request):
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
 
-from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from .models import Library, Book
 
-class LibraryDetailView(ListView):
+class LibraryDetailView(DetailView):
     model = Book
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'books'
