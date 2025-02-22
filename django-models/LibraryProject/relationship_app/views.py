@@ -12,9 +12,9 @@ def list_books(request):
 from django.views.generic import ListView
 from .models import Library, Book
 
-class LibraryBookListView(ListView):
+class LibraryDetailView(ListView):
     model = Book
-    template_name = 'relationship_app/library_books.html'
+    template_name = 'relationship_app/library_details.html'
     context_object_name = 'books'
 
     def get_queryset(self):

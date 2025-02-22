@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import list_books, LibraryBookListView
+from .views import list_books, LibraryDetailView
 
 urlpatterns = [
-    path('books/', list_books, name='list_books'),  
-
-    path('library/<int:library_id>/books/', LibraryBookListView.as_view(), name='library_books'),
+    path('books/', list_books, name='list_books'),
+    path("library/int:pk/", LibraryDetailView.as_view(), name="library_detail")
 ]
