@@ -30,12 +30,12 @@ def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()  # Save new user
+            form.save() 
             username = form.cleaned_data.get('username')
             return redirect('login')
     else:
         form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form':form}) 
+    return render(request, 'relationship_app/register.html', {'form':form}) 
 
 
 def user_login(request):
@@ -47,7 +47,7 @@ def user_login(request):
             return redirect('home') 
     else:
         form = AuthenticationForm()
-    return render(request, 'registration/login.html', {'form': form})
+    return render(request, 'relationship_app/login.html', {'form': form})
 
 def user_logout(request):
     logout(request)  
