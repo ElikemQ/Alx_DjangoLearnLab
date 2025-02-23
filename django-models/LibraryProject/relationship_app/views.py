@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from .models import Book 
 
+
 def list_books(request):
     books = Book.objects.all()
 
@@ -52,3 +53,43 @@ def user_login(request):
 def user_logout(request):
     logout(request)  
     return redirect('login')
+
+
+from django.contrib.auth.decorators import user_passes_test
+from .models import Library, Book, UserProfile
+from django.views.generic.detail import DetailView
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import render, get_object_or_404, redirect
+
+def is_librarian(user):
+    if hasattr(user, 'userprofile') and user.userprofile:
+        return user.userprofile.role == 'librarian'
+    return False
+
+# Function to check if the user is a member
+def is_member(user):
+    if hasattr(user, 'userprofile') and user.userprofile:
+        return user.userprofile.role == 'member'
+    return False
+
+def is_admin(user):
+    if hasattr(user, 'userprofile') and user.userprofile:
+        print(f"User role: {user.userprofile.role}")  # Debugging statement
+        return user.userprofile.role == 'admin'
+    return False
+
+
+# Admin view - only accessible by admin users
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'relationship_app/admin_view.html')
+
+# Librarian view - only accessible by librarian users
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'relationship_app/librarian_view.html')
+
+# Member view - only accessible by member users
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'relationship_app/member_view.html')
