@@ -66,24 +66,23 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404, redirect
 
 
-def is_librarian(user):
-    if hasattr(user, "userprofile") and user.userprofile:
-        return user.userprofile.role == "librarian"
-    return False
 
-
-def is_member(user):
-    if hasattr(user, "userprofile") and user.userprofile:
-        return user.userprofile.role == "member"
-    return False
 
 
 def is_admin(user):
-    if hasattr(user, "userprofile") and user.userprofile:
-        print(f"User role: {user.userprofile.role}")
-        return user.userprofile.role == "admin"
+    if user.is_authenticated:
+        return user.userprofile.role == 'Admin'
     return False
 
+def is_librarian(user):
+    if user.is_authenticated:
+            return user.userprofile.role == 'Librarian'
+    return False
+
+def is_member(user):
+    if user.is_authenticated:
+            return user.userprofile.role == 'Member'
+    return False
 
 @user_passes_test(is_admin)
 def admin_view(request):
