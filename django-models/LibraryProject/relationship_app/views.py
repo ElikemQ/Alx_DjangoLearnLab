@@ -10,11 +10,9 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.views.generic.detail import DetailView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate
 from django.http import HttpResponse
-from django.contrib import messages
 from .models import Book, Library, UserProfile, Author
 
 
@@ -68,13 +66,13 @@ def user_logout(request):
 
 
 def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role =='Admin'
+    return user.is_authenticated and user.userprofile.role == 'Admin'
 
 def is_librarian(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+    return user.userprofile.role == 'Librarian'
 
 def is_member(user):
-    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+    return user.userprofile.role == 'Member'
 
 
 @login_required
@@ -95,48 +93,6 @@ def member_view(request):
 
 
 
-
-# def check_role(user, role):
-#     if not user.userprofile:
-#         raise PermissionDenied("User profile does not exist.")
-#     if user.userprofile.role != role:
-#         raise PermissionDenied(f"You do not have {role} privileges.")
-#     return True
-
-# @user_passes_test(lambda u: u.userprofile.role == 'Admin')
-# def admin_view(request):
-#     return render(request, 'admin_view.html')
-
-# # Librarian view - only accessible to users with the 'Librarian' role
-# @user_passes_test(lambda u: u.userprofile.role == 'Librarian')
-# def librarian_view(request):
-#     return render(request, 'librarian_view.html')
-
-# # Member view - only accessible to users with the 'Member' role
-# @user_passes_test(lambda u: u.userprofile.role == 'Member')
-# def member_view(request):
-#     return render(request, 'member_view.html')
-
-# def is_admin(user):
-#     return user.userprofile.role == 'Admin'
-
-# def is_librarian(user):
-#     return user.userprofile.role == 'Librarian'
-
-# def is_member(user):
-#     return user.userprofile.role == 'Member'
-
-# @user_passes_test(is_admin)
-# def admin_view(request):
-#     return render(request, 'relationship_app/admin_view.html')
-
-# @user_passes_test(is_librarian)
-# def librarian_view(request):
-#     return render(request, 'relationship_app/librarian_view.html')
-
-# @user_passes_test(is_member)
-# def member_view(request):
-#     return render(request, 'relationship_app/member_view.html')
 
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)

@@ -42,14 +42,13 @@ class Librarian(models.Model):
         return self.name
     
 
-ROLE_CHOICES = [
+
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
     ('Admin', 'Admin'),
     ('Librarian', 'Librarian'),
     ('Member', 'Member'),
 ]
-
-
-class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
 
