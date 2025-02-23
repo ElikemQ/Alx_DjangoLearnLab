@@ -10,10 +10,12 @@ from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.detail import DetailView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic.detail import DetailView
+from django.views.generic import TemplateView
 from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate
 from .models import UserProfile
+from django.http import HttpResponse
+
 
 def list_books(request):
     books = Book.objects.all()
@@ -88,6 +90,7 @@ def librarian_view(request):
 @user_passes_test(lambda u: u.userprofile.role == 'Member')
 def member_view(request):
     return render(request, 'member_view.html')
+
 
 # def is_admin(user):
 #     return check_role(user, 'Admin')
