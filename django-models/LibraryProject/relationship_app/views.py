@@ -8,7 +8,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.detail import DetailView
-from django.contrib.auth.decorators import permission_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.detail import DetailView
 
@@ -62,20 +62,21 @@ def user_logout(request):
     return redirect("login")
 
 
+def check_role(user, role):
+    if not user.userprofile:
+        raise PermissionDenied("User profile does not exist.")
+    if user.userprofile.role != role:
+        raise PermissionDenied(f"You do not have {role} privileges.")
+    return True
+
 def is_admin(user):
-    if user.is_authenticated:
-        return user.userprofile.role == 'Admin'
-    return False
+    return check_role(user, 'Admin')
 
 def is_librarian(user):
-    if user.is_authenticated:
-            return user.userprofile.role == 'Librarian'
-    return False
+    return check_role(user, 'Librarian')
 
 def is_member(user):
-    if user.is_authenticated:
-            return user.userprofile.role == 'Member'
-    return False
+    return check_role(user, 'Member')
 
 @user_passes_test(is_admin)
 def admin_view(request):
