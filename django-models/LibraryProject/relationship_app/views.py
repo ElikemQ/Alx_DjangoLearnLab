@@ -2,6 +2,17 @@ from django.shortcuts import render
 
 # Create your views here.
 from .models import Book
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import user_passes_test
+from .models import Library, Book, UserProfile
+from django.views.generic.detail import DetailView
+from django.contrib.auth.decorators import permission_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic.detail import DetailView
+from .models import Library, Book
 
 
 def list_books(request):
@@ -10,8 +21,7 @@ def list_books(request):
     return render(request, "relationship_app/list_books.html", {"books": books})
 
 
-from django.views.generic.detail import DetailView
-from .models import Library, Book
+
 
 
 class LibraryDetailView(DetailView):
@@ -23,11 +33,6 @@ class LibraryDetailView(DetailView):
         library_id = self.kwargs["library_id"]
         return Book.objects.filter(library__id=library_id)
 
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.decorators import login_required
 
 
 def register(request):
@@ -57,16 +62,6 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect("login")
-
-
-from django.contrib.auth.decorators import user_passes_test
-from .models import Library, Book, UserProfile
-from django.views.generic.detail import DetailView
-from django.contrib.auth.decorators import permission_required
-from django.shortcuts import render, get_object_or_404, redirect
-
-
-
 
 
 def is_admin(user):
