@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from django.db.models import post_save 
+# from django.db.models import post_save 
 # Create your models here.
 
 class Author(models.Model):
@@ -20,7 +20,7 @@ class Book(models.Model):
     
 class Library(models.Model):
     name = models.CharField(max_length=200)
-    books = models.ManyToManyField(Book, on_delete=models.CASCADE)
+    books = models.ManyToManyField(Book, related_name='library')
 
     def __str__(self):
         return self.name
@@ -48,13 +48,13 @@ class UserProfile(models.Model):
         return f"{self.user.username} - {self.role}"
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         UserProfile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     instance.userprofile.save()
 
 
