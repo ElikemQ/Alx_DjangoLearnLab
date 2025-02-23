@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.views.generic.detail import DetailView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
@@ -67,53 +67,76 @@ def user_logout(request):
     return redirect("login")
 
 
-def check_role(user, role):
-    if not user.userprofile:
-        raise PermissionDenied("User profile does not exist.")
-    if user.userprofile.role != role:
-        raise PermissionDenied(f"You do not have {role} privileges.")
-    return True
-
-
-
-
-
-@user_passes_test(lambda u: u.userprofile.role == 'Admin')
-def admin_view(request):
-    return render(request, 'admin_view.html')
-
-# Librarian view - only accessible to users with the 'Librarian' role
-@user_passes_test(lambda u: u.userprofile.role == 'Librarian')
-def librarian_view(request):
-    return render(request, 'librarian_view.html')
-
-# Member view - only accessible to users with the 'Member' role
-@user_passes_test(lambda u: u.userprofile.role == 'Member')
-def member_view(request):
-    return render(request, 'member_view.html')
-
-
 def is_admin(user):
-    return user.userprofile.role == 'Admin'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role =='Admin'
 
 def is_librarian(user):
-    return user.userprofile.role == 'Librarian'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
 
 def is_member(user):
-    return user.userprofile.role == 'Member'
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
+
+@login_required
 @user_passes_test(is_admin)
 def admin_view(request):
-    return render(request, 'relationship_app/admin_view.html')
+    return render(request, "relationship_app/admin_view.html")
 
-
+@login_required
 @user_passes_test(is_librarian)
 def librarian_view(request):
-    return render(request, 'relationship_app/librarian_view.html')
+    return render(request, "relationship_app/librarian_view.html")
 
+@login_required
 @user_passes_test(is_member)
 def member_view(request):
-    return render(request, 'relationship_app/member_view.html')
+    return render(request, "relationship_app/member_view.html")
+
+
+
+
+
+# def check_role(user, role):
+#     if not user.userprofile:
+#         raise PermissionDenied("User profile does not exist.")
+#     if user.userprofile.role != role:
+#         raise PermissionDenied(f"You do not have {role} privileges.")
+#     return True
+
+# @user_passes_test(lambda u: u.userprofile.role == 'Admin')
+# def admin_view(request):
+#     return render(request, 'admin_view.html')
+
+# # Librarian view - only accessible to users with the 'Librarian' role
+# @user_passes_test(lambda u: u.userprofile.role == 'Librarian')
+# def librarian_view(request):
+#     return render(request, 'librarian_view.html')
+
+# # Member view - only accessible to users with the 'Member' role
+# @user_passes_test(lambda u: u.userprofile.role == 'Member')
+# def member_view(request):
+#     return render(request, 'member_view.html')
+
+# def is_admin(user):
+#     return user.userprofile.role == 'Admin'
+
+# def is_librarian(user):
+#     return user.userprofile.role == 'Librarian'
+
+# def is_member(user):
+#     return user.userprofile.role == 'Member'
+
+# @user_passes_test(is_admin)
+# def admin_view(request):
+#     return render(request, 'relationship_app/admin_view.html')
+
+# @user_passes_test(is_librarian)
+# def librarian_view(request):
+#     return render(request, 'relationship_app/librarian_view.html')
+
+# @user_passes_test(is_member)
+# def member_view(request):
+#     return render(request, 'relationship_app/member_view.html')
 
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)
