@@ -66,7 +66,7 @@ def user_logout(request):
 
 
 def is_admin(user):
-    return user.is_authenticated and user.userprofile.role == 'Admin'
+    return user.userprofile.role == 'Admin'
 
 def is_librarian(user):
     return user.userprofile.role == 'Librarian'
@@ -74,21 +74,20 @@ def is_librarian(user):
 def is_member(user):
     return user.userprofile.role == 'Member'
 
-
 @login_required
 @user_passes_test(is_admin)
 def admin_view(request):
-    return render(request, "relationship_app/admin_view.html")
+    return render(request, 'relationship_app/admin_view.html')
 
 @login_required
 @user_passes_test(is_librarian)
 def librarian_view(request):
-    return render(request, "relationship_app/librarian_view.html")
+    return render(request, 'relationship_app/librarian_view.html')
 
 @login_required
 @user_passes_test(is_member)
 def member_view(request):
-    return render(request, "relationship_app/member_view.html")
+    return render(request, 'relationship_app/member_view.html')
 
 
 
@@ -129,38 +128,3 @@ def delete_book(request, book_id):
     return render(request, "relationship_app/delete_book.html", {"book": book})
 
 
-# @permission_required('relationship_app.can_add_book')
-# def add_book(request):
-#     if request.method == 'POST':
-#         form = BookForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Book added successfully!')
-#             return redirect('list_books')
-#     else:
-#         form = BookForm()
-#     return render(request, 'relationship_app/add_book.html', {'form': form})
-
-# # View to edit an existing book
-# @permission_required('relationship_app.can_change_book')
-# def edit_book(request, book_id):
-#     book = get_object_or_404(Book, id=book_id)
-#     if request.method == 'POST':
-#         form = BookForm(request.POST, instance=book)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Book updated successfully!')
-#             return redirect('list_books')
-#     else:
-#         form = BookForm(instance=book)
-#     return render(request, 'relationship_app/edit_book.html', {'form': form, 'book': book})
-
-# # View to delete a book
-# @permission_required('relationship_app.can_delete_book')
-# def delete_book(request, book_id):
-#     book = get_object_or_404(Book, id=book_id)
-#     if request.method == 'POST':
-#         book.delete()
-#         messages.success(request, 'Book deleted successfully!')
-#         return redirect('list_books')
-#     return render(request, 'relationship_app/delete_book.html', {'book': book})
