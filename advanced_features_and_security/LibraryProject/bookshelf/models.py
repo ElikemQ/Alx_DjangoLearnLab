@@ -60,8 +60,8 @@ class CustomUserManager(BaseUserManager):
 
 objects = CustomUserManager()
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]  # Username is still required but email is used for login
+USERNAME_FIELD = "email"
+REQUIRED_FIELDS = ["username"]  # Username is still required but email is used for login
 
-    def __str__(self):
-        return self.email
+def __str__(self):
+    return self.email
