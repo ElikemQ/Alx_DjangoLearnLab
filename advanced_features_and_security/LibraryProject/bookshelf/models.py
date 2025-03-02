@@ -7,8 +7,19 @@ class Book(models.Model):
     author = models.CharField(max_length=100)
     publication_year = models.IntegerField()
 
+    class Meta:
+        permissions = [
+            ("can_view", "Can view articles"),
+            ("can_create", "Can create articles"),
+            ("can_edit", "Can edit articles"),
+            ("can_delete", "Can delete articles"),
+        ]
+
+    
     def __str__(self):
         return self.title
+
+
 
 # Custom user
 class CustomUser(AbstractUser):
@@ -40,3 +51,17 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(email, password, **extra_fields)
+    
+
+    class CustomUser(AbstractUser):
+        email = models.EmailField(unique=True)
+        date_of_birth = models.DateField(null=True, blank=True)
+        profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
+
+objects = CustomUserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]  # Username is still required but email is used for login
+
+    def __str__(self):
+        return self.email
