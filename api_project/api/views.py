@@ -17,6 +17,11 @@ class BookList(generics.ListAPIView):
     serializer_class = BookSerializer
 
 
+# implementing CRUD
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
 
 
 
@@ -51,9 +56,6 @@ class MyModelViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  
 
     def get_permissions(self):
-        """
-        Override to add different permissions for different actions.
-        """
         if self.action == 'create':
             return [IsAdminUser()]  
         elif self.action in ['update', 'partial_update', 'destroy']:
