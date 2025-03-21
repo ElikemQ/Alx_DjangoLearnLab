@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-2iq$jn)g9-9y!o#+zcn4sk!_5-2pi8xfkwa#%zbgp*d4omqrx-"
+SECRET_KEY = "django-insecure-qm*f1#go66c3c!b^eq9j=3yrrvu@606m&_q!9st#m0omogn!@h"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,11 +79,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": 'blog',
-        "USER": 'root',
-        "PASSWORD": 'qwerty',
+        "USER" : 'root',
+        "PASSWORD" : 'qwerty',
         "HOST" : 'localhost',
         "PORT" : '3306',
-        # "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -121,11 +121,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/" 
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+    BASE_DIR / 'C:/Users/atoto/Desktop/ALx/Alx_DjangoLearnLab/django_blog/blog/static',
+ ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
