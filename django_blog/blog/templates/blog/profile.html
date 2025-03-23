@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Your Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <h3>User Information</h3>
+            {{ user_form.as_p }}
+
+            <h3>Profile Information</h3>
+            {{ profile_form.as_p }}
+
+            <button type="submit">Update Profile</button>
+        </form>
+
+        <p><a href="{% url 'home' %}">Go to homepage</a></p>
+    </div>
+</body>
+</html>

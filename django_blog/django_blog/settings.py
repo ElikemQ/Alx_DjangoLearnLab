@@ -122,12 +122,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "/static/"
-
 STATICFILES_DIRS = [
-    BASE_DIR / 'C:/Users/atoto/Desktop/ALx/Alx_DjangoLearnLab/django_blog/blog/static',
+    BASE_DIR / 'blog/static',
+    
  ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = []
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+SESSION_COOKIE_AGE = 3600
+SECURE_SSL_REDIRECT = True
