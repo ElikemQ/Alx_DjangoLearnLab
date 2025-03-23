@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Post
+from django.core.exceptions import ValidationError
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -24,3 +25,21 @@ class ProfileForm(forms.ModelForm):
       class Meta:
             model = Profile
             fields = ('bio', 'profile_picture')
+
+class PostForm(forms.ModelForm):
+      class Meta:
+            model = Post
+            fields = ['title', 'content']
+
+      def clean_title(self):
+            title = self.cleaned_data.get('title')
+            if Post.objects.filter(title=title).exists():
+                  raise ValidationError('This title already exist on a different post.')
+            return title
+
+      def save(self, commit=True):
+            post = super().save(commit=False)
+            if commit:
+                  post.author = self.request.user
+                  post.save()
+            return post
