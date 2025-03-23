@@ -137,20 +137,34 @@ class PostDetailView(DetailView):
         return context
 
 
-@login_required
-def create_comment(request, post_pk):
-    post = get_object_or_404(Post, pk=post_pk) 
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.author = request.user 
-            comment.post = post 
-            comment.save() 
-            return redirect('blog:post_detail', pk=post.pk)
-    else:
-        form = CommentForm()
-    return redirect('blog:post_detail', pk=post.pk) 
+# @login_required
+# def create_comment(request, post_pk):
+#     post = get_object_or_404(Post, pk=post_pk) 
+#     if request.method == 'POST':
+#         form = CommentForm(request.POST)
+#         if form.is_valid():
+#             comment = form.save(commit=False)
+#             comment.author = request.user 
+#             comment.post = post 
+#             comment.save() 
+#             return redirect('blog:post_detail', pk=post.pk)
+#     else:
+#         form = CommentForm()
+#     return redirect('blog:post_detail', pk=post.pk) 
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
