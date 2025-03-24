@@ -12,6 +12,8 @@ from taggit.models import Tag
 
 
 
+
+
 # Create your views here.
 
 def register(request):
@@ -205,6 +207,12 @@ def search_posts(request):
 
 
 
-def tagged_posts(request, tag_name):
-    posts = Post.objects.filter(tags__name__icontains=tag_name)
-    return render(request, 'blog/tagged_posts.html', {'posts' : posts, 'tag_name': tag_name})
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list_by_tag.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs['tag_slug']
+        tag = Tag.objects.get(slug=tag_slug)
+        return Post.objects.filter(tags=tag)
