@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CustomUserCreationForm, CustomUerChangeForm, ProfileForm
+from .forms import CustomUserCreationForm, CustomUerChangeForm, ProfileForm, PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.urls import reverse_lazy
@@ -7,7 +7,9 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Comment
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import PostForm, CommentForm
+from django.db.models import Q
+from taggit.models import Tag
+
 
 
 # Create your views here.
@@ -191,3 +193,18 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('blog:post_detail', kwargs={'pk': self.object.post.pk})
+    
+
+def search_posts(request):
+    query = request.GET.get('q', '')
+    if query:
+        posts = Post.objects.filter (Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)).distinct()
+    else:
+        posts = Post.objects.all()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
+
+def tagged_posts(request, tag_name):
+    posts = Post.objects.filter(tags__name__icontains=tag_name)
+    return render(request, 'blog/tagged_posts.html', {'posts' : posts, 'tag_name': tag_name})

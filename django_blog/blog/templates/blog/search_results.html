@@ -1,0 +1,53 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>Search Results</h1>
+
+  {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+  {% endif %}
+
+  {% if posts %}
+    <ul>
+      {% for post in posts %}
+        <li>
+          <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+          <p>{{ post.content|slice:":200" }}...</p>
+          <p><strong>Tags:</strong> 
+            {% for tag in post.tags.all %}
+              <span class="badge badge-secondary">{{ tag.name }}</span>
+            {% endfor %}
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts found.</p>
+  {% endif %}
+{% endblock %}{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h1>Search Results</h1>
+
+  {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+  {% endif %}
+
+  {% if posts %}
+    <ul>
+      {% for post in posts %}
+        <li>
+          <a href="{% url 'blog:post_detail' post.pk %}">{{ post.title }}</a>
+          <p>{{ post.content|slice:":200" }}...</p>
+          <p><strong>Tags:</strong> 
+            {% for tag in post.tags.all %}
+              <a href="{% url 'blog:tagged_posts' tag.name %}" class="badge badge-secondary">{{ tag.name }}</a>
+            {% endfor %}
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts found.</p>
+  {% endif %}
+{% endblock %}

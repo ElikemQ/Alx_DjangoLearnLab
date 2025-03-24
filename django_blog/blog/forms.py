@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from .models import Profile, Post, Comment
 from django.core.exceptions import ValidationError
+from taggit.forms import TagField
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -29,8 +30,10 @@ class ProfileForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
       class Meta:
             model = Post
-            fields = ['title', 'content']
+            fields = ['title', 'content', 'tags']
 
+      tags = TagField(required=False)      
+      
       def clean_title(self):
             title = self.cleaned_data.get('title')
             if Post.objects.filter(title=title).exists():

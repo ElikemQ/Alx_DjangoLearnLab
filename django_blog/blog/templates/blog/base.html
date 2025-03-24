@@ -15,12 +15,15 @@
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
             </ul>
+            <form method="get" action="{% url 'blog:search_posts' %}">
+                <input type="text" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+                <button type="submit">Search</button>
+            </form>
         </nav>
     </header>
 
     <div class="content">
         {% block content %}
-        <!-- Page-specific content goes here -->
         {% endblock %}
     </div>
 
@@ -35,7 +38,8 @@
 
 
 
-<!DOCTYPE html>
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -68,4 +72,4 @@
     <p>&copy; 2025 My Blog</p>
   </footer>
 </body>
-</html>
+</html> -->
