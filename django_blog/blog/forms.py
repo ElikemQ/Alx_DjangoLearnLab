@@ -3,7 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from .models import Profile, Post, Comment
 from django.core.exceptions import ValidationError
-from taggit.forms import TagField
+from taggit.forms import TagField 
+from django.forms import widgets
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -27,12 +28,20 @@ class ProfileForm(forms.ModelForm):
             model = Profile
             fields = ('bio', 'profile_picture')
 
+
+class TagWidget(widgets.TextInput):
+     def render(self, name, value, attrs=None, renderer=None):
+          if isinstance(value, str):
+               value = value.split(",")
+               return super().render(name, value, attrs, renderer)
+          
+          
 class PostForm(forms.ModelForm):
       class Meta:
             model = Post
             fields = ['title', 'content', 'tags']
 
-      tags = TagField(required=False)      
+      tags = forms.CharField(widget=TagWidget, required=False)      
       
       def clean_title(self):
             title = self.cleaned_data.get('title')
