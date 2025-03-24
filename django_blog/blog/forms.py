@@ -31,17 +31,19 @@ class ProfileForm(forms.ModelForm):
 
 class TagWidget(widgets.TextInput):
      def render(self, name, value, attrs=None, renderer=None):
-          if isinstance(value, str):
+          if isinstance(value,str):
                value = value.split(",")
-               return super().render(name, value, attrs, renderer)
-          
-          
+          value = ",".join(value)
+          return super().render(name, value, attrs, renderer)
+
 class PostForm(forms.ModelForm):
+      tags = forms.CharField(required=False, widget=TagWidget(attrs={'placeholder': 'Enter tags which are separated by commas'}))
+
       class Meta:
             model = Post
             fields = ['title', 'content', 'tags']
 
-      tags = forms.CharField(widget=TagWidget, required=False)      
+      
       
       def clean_title(self):
             title = self.cleaned_data.get('title')
