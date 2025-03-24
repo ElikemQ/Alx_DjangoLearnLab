@@ -37,7 +37,7 @@ class TagWidget(widgets.TextInput):
           return super().render(name, value, attrs, renderer)
 
 class PostForm(forms.ModelForm):
-      tags = forms.CharField(required=False, widget=TagWidget(attrs={'placeholder': 'Enter tags which are separated by commas'}))
+      tags = forms.CharField(required=False, widget=TagWidget())
 
       class Meta:
             model = Post
