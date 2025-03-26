@@ -28,6 +28,12 @@ class TokenSerializer(serializers.ModelSerializer):
         model = Token
         fields = ['token']
 
+    def create(self, validated_data):
+        user = validated_data.get("user")
+        token,created = Token.objects.get_or_create(user=user)
+        return token
+                                  
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
