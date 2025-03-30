@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
@@ -52,11 +52,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class FeedView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
         followed_users = user.following.all()
-        posts = Post.objects.filter(author__in=followed_users).order_by_('-created_at')
+        posts = Post.objects.filter(author__in=followed_users).order_by('-created_at')
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
