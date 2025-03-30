@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import update_last_login
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework. views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -9,6 +9,9 @@ from .serializers import RegisterSerializer, LoginSerializer, CustomUserSerializ
 from django.contrib.auth import get_user_model, authenticate
 from django.shortcuts import get_object_or_404
 from accounts.models import CustomUser
+from rest_framework.exceptions import NotFound
+
+
 
 # Create your views here.
 
@@ -49,8 +52,9 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
     
 
-class FollowUnfollowView(APIView):
-    permission_classes = [IsAuthenticated]
+class FollowUnfollowView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CustomUserSerializer
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
@@ -70,5 +74,7 @@ class FollowUnfollowView(APIView):
             return Response({'detail': "You can't unfollow yourself,."}, status=status.HTTP_400_BAD_REQUEST)
         
         user.following.remove(user_to_unfollow)
-        return Response({'detail': f"You've unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+        return Response({'detail': f"You've unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)  
     
+    def get_queryset(self):
+        return CustomUser.objects.all()
