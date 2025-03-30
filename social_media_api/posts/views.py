@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment, Like
 from rest_framework.exceptions import PermissionDenied
 from .serializers import PostSerializer, CommentSerializer
@@ -69,37 +69,34 @@ class FeedView(APIView):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, post_id):
-    try:
-        post = Post.objects.get(id=post_id)
-    except Post.DoesNotExist:
-        return Response({'detail': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+    post = get_object_or_404(Post, id=post_id)
     
     user = request.user
-
+    
     if Like.objects.filter(user=user, post=post).exists():
         return Response({'detail': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
     
     Like.objects.create(user=user, post=post)
 
     post_content_type = ContentType.objects.get_for_model(Post)
-    Notification.objects.create(recipient=post.author,actor=user,verb='liked',target_content=post_content_type, target_object_id=post.id,target=post)
+    Notification.objects.create(recipient=post.author, actor=user, verb='liked', target_content=post_content_type, target_object_id=post.id, target=post)
+    
     return Response({'detail': 'Post liked successfully'}, status=status.HTTP_201_CREATED)
+
 
     
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def unlike_post(request, post_id):
-    try:
-        post = Post.objects.get(id=post_id)
-    except Post.DoesNotExist:
-        return Response({"detail": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    post = get_object_or_404(Post, id=post_id)
 
     user = request.user
 
     like = Like.objects.filter(user=user, post=post).first()
     if not like:
         return Response({"detail": "You have not liked this post yet"}, status=status.HTTP_400_BAD_REQUEST)
+    
     like.delete()
     return Response({"detail": "Post unliked successfully"}, status=status.HTTP_200_OK)
 
