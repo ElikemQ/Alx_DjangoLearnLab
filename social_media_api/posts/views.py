@@ -4,7 +4,7 @@ from rest_framework.exceptions import PermissionDenied
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, generics
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
@@ -69,7 +69,7 @@ class FeedView(APIView):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = generics.get_object_or_404(Post, id=post_id)
     
     user = request.user
     
@@ -89,7 +89,7 @@ def like_post(request, post_id):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def unlike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = generics.get_object_or_404(Post, id=post_id)
 
     user = request.user
 
