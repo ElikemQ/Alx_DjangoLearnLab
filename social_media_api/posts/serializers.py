@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from django.contrib.auth import get_user_model
 from .models import CustomUser
+
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -34,3 +35,13 @@ class CommentSerializer(serializers.ModelSerializer):
             if not value or len(value.strip()) < 5:
                 raise serializers.ValidationError('Comment mut be at least 5 characters')
             return value 
+        
+        
+class LikeSerializer(serializers.ModelSerializer):
+     user = serializers.StringRelatedField()
+     post = PostSerializer()
+     
+     class Meta:
+          model = Like
+          fields = ['user', 'post', 'timestamp']
+
