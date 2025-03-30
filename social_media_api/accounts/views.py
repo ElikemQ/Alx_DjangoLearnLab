@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import RegisterSerializer, LoginSerializer, CustomUserSerializer
 from django.contrib.auth import get_user_model, authenticate
+from django.shortcuts import get_object_or_404
+from accounts.models import CustomUser
 
 # Create your views here.
 
@@ -35,7 +37,7 @@ class LoginView(APIView):
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class ProfileView(APIView):
+class ProfileView(APIView):    
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -44,4 +46,29 @@ class ProfileView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+    
+
+class FollowUnfollowView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user_id):
+        user_to_follow = get_object_or_404(CustomUser, id=user_id)
+        user = request.user
+
+        if user == user_to_follow:
+            return Response({'detail': "You can't follow yourself"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.following.add(user_to_follow)
+        return Response({'detail': f"You're now following {user_to_follow.username}."}, status=status.HTTP_200_OK)
+    
+    def delete(self, request, user_id):
+        user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
+        user = request.user
+
+        if user == user_to_unfollow:
+            return Response({'detail': "You can't unfollow yourself,."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.following.remove(user_to_unfollow)
+        return Response({'detail': f"You've unfollowed {user_to_unfollow.username}."}, status=status.HTTP_200_OK)
+    

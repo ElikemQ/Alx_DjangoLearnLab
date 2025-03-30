@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import Post, Comment
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
-CustomUser = get_user_model
 
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
