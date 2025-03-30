@@ -66,56 +66,61 @@ class FeedView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def like_post(request, post_id):
-    post = generics.get_object_or_404(Post, id=post_id)
-    
-    user = request.user
-    
-    if Like.objects.filter(user=user, post=post).exists():
-        return Response({'detail': 'You have already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    Like.objects.create(user=user, post=post)
+class LikePostView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    post_content_type = ContentType.objects.get_for_model(Post)
-    Notification.objects.create(recipient=post.author, actor=user, verb='liked', target_content=post_content_type, target_object_id=post.id, target=post)
-    
-    return Response({'detail': 'Post liked successfully'}, status=status.HTTP_201_CREATED)
+    def post(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if created:
+            if post.user != request.user:
+                Notification.objects.create(
+                    recipient=post.user,
+                    actor=request.user,
+                    verb="liked your post",
+                    target=post
+                )
+            return Response({"detail": "Post liked."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": "Post already liked."}, status=status.HTTP_400_BAD_REQUEST)
+
+class UnlikePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response({"detail": "Post unliked."}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+"generics.get_object_or_404(Post, pk=pk)"
 
 
-    
 
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def unlike_post(request, post_id):
-    post = generics.get_object_or_404(Post, id=post_id)
+# @api_view(['POST'])
+# @permission_classes([permissions.IsAuthenticated])
+# def create_comment(request, post_id):
+#     try:
+#         post = Post.objects.get(id=post_id)
+#     except Post.DoesNotExist:
+#         return Response({"detail": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    user = request.user
+#     user = request.user
+#     content = request.data.get("content")
 
-    like = Like.objects.filter(user=user, post=post).first()
-    if not like:
-        return Response({"detail": "You have not liked this post yet"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    like.delete()
-    return Response({"detail": "Post unliked successfully"}, status=status.HTTP_200_OK)
+#     comment = Comment.objects.create(post=post, author=user, content=content)
 
-
-
-@api_view(['POST'])
-@permission_classes([permissions.IsAuthenticated])
-def create_comment(request, post_id):
-    try:
-        post = Post.objects.get(id=post_id)
-    except Post.DoesNotExist:
-        return Response({"detail": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    user = request.user
-    content = request.data.get("content")
-
-    comment = Comment.objects.create(post=post, author=user, content=content)
-
-    Notification.objects.create(recipient=post.author, actor=user, verb='commented on your post', target_content_type=ContentType.objects.get_for_model(Post),target_object_id=post.id, target=post)
-    return Response({"detail": "Comment added successfully"}, status=status.HTTP_201_CREATED)
+#     Notification.objects.create(recipient=post.author, actor=user, verb='commented on your post', target_content_type=ContentType.objects.get_for_model(Post),target_object_id=post.id, target=post)
+#     return Response({"detail": "Comment added successfully"}, status=status.HTTP_201_CREATED)
     
 
