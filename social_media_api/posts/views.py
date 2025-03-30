@@ -88,7 +88,7 @@ class LikePostView(APIView):
         else:
             return Response({"detail": "Post already liked."}, status=status.HTTP_400_BAD_REQUEST)
 
-class UnlikePostView(APIView):
+class UnLikePostView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
