@@ -106,21 +106,5 @@ class UnLikePostView(APIView):
 "generics.get_object_or_404(Post, pk=pk)"
 
 
-
-# @api_view(['POST'])
-# @permission_classes([permissions.IsAuthenticated])
-# def create_comment(request, post_id):
-#     try:
-#         post = Post.objects.get(id=post_id)
-#     except Post.DoesNotExist:
-#         return Response({"detail": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-
-#     user = request.user
-#     content = request.data.get("content")
-
-#     comment = Comment.objects.create(post=post, author=user, content=content)
-
-#     Notification.objects.create(recipient=post.author, actor=user, verb='commented on your post', target_content_type=ContentType.objects.get_for_model(Post),target_object_id=post.id, target=post)
-#     return Response({"detail": "Comment added successfully"}, status=status.HTTP_201_CREATED)
     
 
